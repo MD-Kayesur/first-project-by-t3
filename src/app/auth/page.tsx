@@ -101,7 +101,7 @@ export default function AuthPage() {
 
         <div className="mt-8 text-center text-sm">
           <p className="text-slate-500">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/auth/signup" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
               Sign up for free
             </Link>

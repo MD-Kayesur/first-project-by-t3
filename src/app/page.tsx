@@ -1,69 +1,169 @@
-import Link from "next/link";
+"use client";
 
-import { LatestPost } from "~/app/_components/post";
-import { auth } from "~/server/auth";
-import { api, HydrateClient } from "~/trpc/server";
+import { useState } from "react";
+import { api } from "~/trpc/react";
+import { LatestProductActivity, ProductForm, ProductList, type Product } from "~/app/_components/product";
 
-export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await auth();
+export default function Home() {
+  const [title, setTitle] = useState("");
+  const [details, setDetails] = useState("");
+  const [price, setPrice] = useState("");
+  const [images, setImages] = useState("");
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
-  }
+  const utils = api.useUtils();
+
+  // Queries
+  const { data: products, isLoading: loadingFeed } = api.product.getAll.useQuery();
+  const { data: latestProduct, isLoading: loadingLatest } = api.product.getLatest.useQuery();
+
+  // Helper to refresh all layout data paths
+  const refreshData = async () => {
+    await utils.product.getAll.invalidate();
+    await utils.product.getLatest.invalidate();
+    setEditingProduct(null);
+    setTitle("");
+    setDetails("");
+    setPrice("");
+    setImages("");
+  };
+
+  // Mutations
+  const createProduct = api.product.create.useMutation({ onSuccess: refreshData });
+  const deleteProduct = api.product.delete.useMutation({ onSuccess: refreshData });
+  
+  // PUT Mutation
+  const updatePut = api.product.updatePut.useMutation({ onSuccess: refreshData });
+  
+  // PATCH Mutation
+  const updatePatch = api.product.updatePatch.useMutation({ onSuccess: refreshData });
+
+  const handleCreateOrPutSubmit = async (e: React.FormEvent, files: File[]) => {
+    e.preventDefault();
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
+      alert("Please enter a valid price!");
+      return;
+    }
+
+    setIsUploading(true);
+    let finalImages = images;
+
+    try {
+      // 1. Handle file upload if files are selected
+      if (files.length > 0) {
+        const formData = new FormData();
+        files.forEach((file) => {
+          formData.append("files", file);
+        });
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to upload local image files");
+        }
+
+        const data = (await res.json()) as { urls: string[] };
+        if (data.urls && data.urls.length > 0) {
+          const uploadedUrls = data.urls.join(",");
+          finalImages = finalImages ? `${finalImages},${uploadedUrls}` : uploadedUrls;
+        }
+      }
+
+      // 2. Perform tRPC mutation
+      if (editingProduct) {
+        // PUT requires passing all complete fields
+        updatePut.mutate({
+          id: editingProduct.id,
+          title,
+          details,
+          price: parsedPrice,
+          images: finalImages,
+        });
+      } else {
+        createProduct.mutate({
+          title,
+          details,
+          price: parsedPrice,
+          images: finalImages,
+        });
+      }
+    } catch (err) {
+      console.error("🔴 Product listing submission failed:", err);
+      alert("An error occurred while uploading images. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handlePatchTitleOnly = (id: number) => {
+    const newTitle = prompt("Enter new product title:");
+    if (!newTitle) return;
+    // PATCH allows sending just the title field; other fields remain untouched
+    updatePatch.mutate({ id, title: newTitle });
+  };
+
+  const startEdit = (product: Product) => {
+    setEditingProduct(product);
+    setTitle(product.title);
+    setDetails(product.details);
+    setPrice(product.price.toString());
+    setImages(product.images);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProduct(null);
+    setTitle("");
+    setDetails("");
+    setPrice("");
+    setImages("");
+  };
 
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
+    <main className="p-8 max-w-4xl mx-auto space-y-8 bg-slate-50 min-h-screen">
+      <div className="flex flex-col gap-1.5">
+        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+          🏪 Product Management Catalog
+        </h1>
+        <p className="text-sm text-slate-500">
+          A secure dashboard demonstrating PUT and PATCH endpoints bound to a Neon PostgreSQL database.
+        </p>
+      </div>
 
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-              >
-                {session ? "Sign out" : "Sign in"}
-              </Link>
-            </div>
-          </div>
+      {/* LATEST PRODUCT BANNER */}
+      <LatestProductActivity latestProduct={latestProduct} isLoading={loadingLatest} />
 
-          {session?.user && <LatestPost />}
-        </div>
-      </main>
-    </HydrateClient>
+      {/* PRODUCT FORM */}
+      <ProductForm
+        title={title}
+        setTitle={setTitle}
+        details={details}
+        setDetails={setDetails}
+        price={price}
+        setPrice={setPrice}
+        images={images}
+        setImages={setImages}
+        editingProduct={editingProduct}
+        onSubmit={handleCreateOrPutSubmit}
+        onCancel={handleCancelEdit}
+        isPending={createProduct.isPending || updatePut.isPending || isUploading}
+      />
+
+      {/* PRODUCT LIST GRID */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold text-slate-800 tracking-tight">Current Inventory Catalog</h2>
+        <ProductList
+          products={products}
+          isLoading={loadingFeed}
+          onEdit={startEdit}
+          onPatch={handlePatchTitleOnly}
+          onDelete={(id) => deleteProduct.mutate({ id })}
+        />
+      </div>
+    </main>
   );
 }

@@ -8,14 +8,14 @@ async function run() {
   // Test connection and measure query response time
   const start = Date.now();
   const users = await prisma.user.findMany();
-  const posts = await prisma.post.findMany();
+  const products = await prisma.product.findMany();
   const end = Date.now();
 
   console.log("🟢 Connection status: SUCCESSFUL");
   console.log(`⏱️  Response latency: ${end - start}ms`);
   console.log(`📊 Current record counts:`);
   console.log(`   - Users: ${users.length}`);
-  console.log(`   - Posts: ${posts.length}`);
+  console.log(`   - Products: ${products.length}`);
 }
 
 run()

@@ -1,42 +1,46 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
-export const postRouter = createTRPCRouter({
-  // Get all posts for the global timeline
+export const productRouter = createTRPCRouter({
+  // Get all products
   getAll: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.post.findMany({
+    return await ctx.db.product.findMany({
       orderBy: { createdAt: "desc" },
     });
   }),
 
-  // Get the latest post created by the logged-in user
+  // Get the latest product created by the logged-in user
   getLatest: protectedProcedure.query(async ({ ctx }) => {
-    const post = await ctx.db.post.findFirst({
+    const product = await ctx.db.product.findFirst({
       where: { createdById: ctx.session.user.id },
       orderBy: { createdAt: "desc" },
     });
-    return post ?? null;
+    return product ?? null;
   }),
 
-  // Create a new post linked to the logged-in user
+  // Create a new product
   create: protectedProcedure
     .input(
       z.object({
         title: z.string().min(1),
-        content: z.string().min(1),
+        details: z.string().min(1),
+        price: z.number().positive(),
+        images: z.string().min(1),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.post.create({
+      return await ctx.db.product.create({
         data: {
           title: input.title,
-          content: input.content,
+          details: input.details,
+          price: input.price,
+          images: input.images,
           createdBy: { connect: { id: ctx.session.user.id } },
         },
       });
     }),
 
-  // Delete a post owned by the logged-in user
+  // Delete a product owned by the logged-in user
   delete: protectedProcedure
     .input(
       z.object({
@@ -44,46 +48,50 @@ export const postRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.post.delete({
+      return await ctx.db.product.delete({
         where: { id: input.id, createdById: ctx.session.user.id },
       });
     }),
 
-  // 1. PUT ENDPOINT: Full resource replacement
+  // PUT: Full resource replacement
   updatePut: protectedProcedure
     .input(
       z.object({
         id: z.number(),
-        title: z.string().min(1),   // Required field
-        content: z.string().min(1), // Required field
+        title: z.string().min(1),
+        details: z.string().min(1),
+        price: z.number().positive(),
+        images: z.string().min(1),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.post.update({
-        where: { id: input.id, createdById: ctx.session.user.id }, // Security barrier
+      return await ctx.db.product.update({
+        where: { id: input.id, createdById: ctx.session.user.id },
         data: {
           title: input.title,
-          content: input.content,
+          details: input.details,
+          price: input.price,
+          images: input.images,
         },
       });
     }),
 
-  // 2. PATCH ENDPOINT: Partial field updates
+  // PATCH: Partial updates
   updatePatch: protectedProcedure
     .input(
       z.object({
         id: z.number(),
-        title: z.string().min(1).optional(),   // Optional field
-        content: z.string().min(1).optional(), // Optional field
+        title: z.string().min(1).optional(),
+        details: z.string().min(1).optional(),
+        price: z.number().positive().optional(),
+        images: z.string().min(1).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Destructure ID out so it isn't passed into the Prisma data payload
       const { id, ...updateData } = input;
-      
-      return await ctx.db.post.update({
+      return await ctx.db.product.update({
         where: { id: id, createdById: ctx.session.user.id },
-        data: updateData, // Prisma automatically ignores undefined fields
+        data: updateData,
       });
     }),
 });

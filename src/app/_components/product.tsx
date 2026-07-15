@@ -2,6 +2,7 @@
 "use client";
 
 import { type FormEvent, useState, useEffect } from "react";
+import Link from "next/link";
 
 export type Product = {
   id: number;
@@ -311,8 +312,8 @@ export function ProductList({ products, isLoading, onEdit, onPatch, onDelete }: 
             key={product.id}
             className="flex flex-col bg-white border border-slate-150 hover:border-indigo-150 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden"
           >
-            {/* Image section */}
-            <div className="relative h-44 bg-slate-900 overflow-hidden flex items-center justify-center">
+            {/* Image section wrapped in Link */}
+            <Link href={`/products/${product.id}`} className="relative h-44 bg-slate-900 overflow-hidden flex items-center justify-center cursor-pointer block">
               {imageUrl ? (
                 <img
                   src={imageUrl}
@@ -329,14 +330,16 @@ export function ProductList({ products, isLoading, onEdit, onPatch, onDelete }: 
               <div className="absolute top-3 right-3 bg-emerald-500 text-white font-extrabold text-xs px-3 py-1.5 rounded-full shadow-md">
                 {formatPrice(product.price)}
               </div>
-            </div>
+            </Link>
 
             {/* Info section */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
               <div>
-                <h3 className="text-base font-bold text-slate-800 tracking-tight group-hover:text-indigo-600 transition-colors duration-200 line-clamp-1">
-                  {product.title}
-                </h3>
+                <Link href={`/products/${product.id}`}>
+                  <h3 className="text-base font-bold text-slate-800 tracking-tight group-hover:text-indigo-600 transition-colors duration-200 line-clamp-1 cursor-pointer">
+                    {product.title}
+                  </h3>
+                </Link>
                 <p className="text-slate-600 text-xs mt-1.5 leading-relaxed line-clamp-3">
                   {product.details}
                 </p>

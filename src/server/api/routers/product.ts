@@ -9,6 +9,16 @@ export const productRouter = createTRPCRouter({
     });
   }),
 
+  // Get a single product by ID
+  getById: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const product = await ctx.db.product.findUnique({
+        where: { id: input.id },
+      });
+      return product ?? null;
+    }),
+
   // Get the latest product created by the logged-in user
   getLatest: protectedProcedure.query(async ({ ctx }) => {
     const product = await ctx.db.product.findFirst({

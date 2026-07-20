@@ -53,6 +53,10 @@ export const authConfig = {
         const isValid = await compare(credentials.password as string, user.password);
         if (!isValid) return null;
         
+        if (!user.emailVerified) {
+          throw new Error("Please verify your email address before logging in.");
+        }
+        
         return {
           id: user.id,
           name: user.name,

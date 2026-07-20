@@ -24,7 +24,7 @@ export default function AuthPage() {
     });
 
     if (res?.error) {
-      setError("Invalid email or password");
+      setError("Invalid email/password, or email not verified.");
     } else if (res?.ok) {
       router.push("/");
       router.refresh();
@@ -115,9 +115,9 @@ export default function AuthPage() {
             </div>
 
             <div className="text-sm">
-              <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
+              <Link href="/auth/forgot-password" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
                 Forgot your password?
-              </a>
+              </Link>
             </div>
           </div>
 

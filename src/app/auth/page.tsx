@@ -1,8 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function AuthPage() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (res?.error) {
+      setError("Invalid email or password");
+    } else if (res?.ok) {
+      router.push("/");
+      router.refresh();
+    }
+  };
   return (
     <div className="flex-1 flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
@@ -17,7 +43,14 @@ export default function AuthPage() {
             Sign in to your account or get started to access the product catalog.
           </p>
         </div>
-        <form className="mt-8 space-y-6" action="#" method="POST" onSubmit={(e) => e.preventDefault()}>
+        
+        {error && (
+          <div className="bg-red-50 text-red-500 p-3 rounded-xl text-sm text-center">
+            {error}
+          </div>
+        )}
+
+        <form className="mt-8 space-y-6" action="#" method="POST" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
               <label htmlFor="email-address" className="text-xs font-bold text-slate-500 uppercase tracking-wider">

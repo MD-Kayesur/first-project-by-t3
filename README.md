@@ -1,29 +1,78 @@
-# Create T3 App
+# SecureAuth-T3-Starter (Nexus)
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A production-ready Next.js application built with the T3 Stack, showcasing a robust, custom, and highly secure authentication system using **NextAuth.js (v5)**.
 
-## What's next? How do I make an app with this?
+This project was built to demonstrate how to implement advanced authentication flows and security measures from scratch, without relying entirely on managed third-party services like Clerk or Auth0.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## 🚀 Key Features
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### 🔐 Advanced Authentication
+- **Custom Credentials Provider:** Fully custom email and password login system.
+- **Secure Password Hashing:** Utilizes `bcryptjs` for secure password storage.
+- **Email Verification Flow:** Users must verify their email addresses via secure, time-limited tokens before gaining access to the platform.
+- **Password Reset Flow:** Built-in "Forgot Password" functionality that generates secure reset tokens and allows users to regain account access.
+- **OAuth Integration:** Supports seamless third-party logins (e.g., Discord) alongside traditional credentials.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+### 🛡️ Security & Performance
+- **API Rate Limiting:** Custom in-memory rate limiting applied to sensitive endpoints (`/signup`, `/forgot-password`) to prevent brute-force and spam attacks.
+- **Session Management:** Secure JWT-based session management managed seamlessly by NextAuth.js.
+- **Database Architecture:** Uses **Prisma ORM** with a **Neon Serverless PostgreSQL** database. The schema is highly optimized with indexes on unique tokens and identifiers to ensure fast lookups.
 
-## Learn More
+### 💻 UI / UX 
+- **Modern UI Design:** Built entirely with **Tailwind CSS**, featuring a clean, responsive layout with glassmorphism elements, dynamic gradients, and smooth hover animations.
+- **Interactive Forms:** Features like "Show/Hide Password" toggles and immediate client-side error handling provide a premium user experience.
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## 🛠️ Tech Stack
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- **Framework:** [Next.js](https://nextjs.org) (App Router)
+- **Authentication:** [NextAuth.js (Auth.js)](https://next-auth.js.org)
+- **Database:** [Neon (Serverless Postgres)](https://neon.tech/)
+- **ORM:** [Prisma](https://prisma.io)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com)
+- **Language:** TypeScript
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## ⚙️ Getting Started
 
-## How do I deploy this?
+### Prerequisites
+Make sure you have Node.js and npm installed. You will also need a PostgreSQL database (like Neon or Supabase) and a Discord Application (for OAuth).
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### 1. Clone the repository
+```bash
+git clone https://github.com/MD-Kayesur/first-project-by-t3.git
+cd first-project-by-t3
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Setup Environment Variables
+Create a `.env` file in the root directory and add the following:
+```env
+# Database
+DATABASE_URL="postgresql://username:password@your-database-url"
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="generate-a-secure-secret"
+
+# OAuth Providers (Optional)
+DISCORD_CLIENT_ID="your-discord-client-id"
+DISCORD_CLIENT_SECRET="your-discord-client-secret"
+```
+
+### 4. Setup Database
+Push the Prisma schema to your database to create the necessary tables:
+```bash
+npm run db:push
+```
+
+### 5. Run the Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## 📝 License
+This project is open-source and available under the MIT License.

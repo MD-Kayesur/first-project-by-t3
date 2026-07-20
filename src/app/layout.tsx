@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { auth } from "~/server/auth";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -18,14 +19,16 @@ const geist = Geist({
 
 import { Navbar } from "~/app/_components/navbar";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth();
+
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body className="min-h-screen flex flex-col bg-slate-50 antialiased">
         <TRPCReactProvider>
-          <Navbar />
+          <Navbar isLoggedIn={!!session?.user} />
           <div className="flex-1 flex flex-col">
             {children}
           </div>

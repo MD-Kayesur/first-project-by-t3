@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 
-export function Navbar() {
+export function Navbar({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -51,11 +51,13 @@ export function Navbar() {
 
           {/* Right side Actions (e.g. Profile or Login placeholder) */}
           <div className="hidden sm:flex sm:items-center sm:gap-4">
-            <Link href="/auth" className="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">
-              Sign In
-            </Link>
-            <Link href="/auth/signup" className="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-indigo-600 shadow-md transition-all">
-              Get Started
+            {!isLoggedIn && (
+              <Link href="/auth" className="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">
+                Sign In
+              </Link>
+            )}
+            <Link href={isLoggedIn ? "/" : "/auth/signup"} className="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-indigo-600 shadow-md transition-all">
+              {isLoggedIn ? "Dashboard" : "Get Started"}
             </Link>
           </div>
 
@@ -99,11 +101,13 @@ export function Navbar() {
               );
             })}
             <div className="pt-4 mt-4 border-t border-slate-100 flex flex-col gap-2">
-              <Link href="/auth" onClick={() => setIsOpen(false)} className="block w-full px-4 py-3 rounded-xl bg-slate-100 text-slate-700 text-sm font-bold text-center transition-colors hover:bg-slate-200">
-                Sign In
-              </Link>
-              <Link href="/auth/signup" onClick={() => setIsOpen(false)} className="block w-full px-4 py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold shadow-md shadow-indigo-200 text-center transition-all hover:bg-indigo-700">
-                Get Started
+              {!isLoggedIn && (
+                <Link href="/auth" onClick={() => setIsOpen(false)} className="block w-full px-4 py-3 rounded-xl bg-slate-100 text-slate-700 text-sm font-bold text-center transition-colors hover:bg-slate-200">
+                  Sign In
+                </Link>
+              )}
+              <Link href={isLoggedIn ? "/" : "/auth/signup"} onClick={() => setIsOpen(false)} className="block w-full px-4 py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold shadow-md shadow-indigo-200 text-center transition-all hover:bg-indigo-700">
+                {isLoggedIn ? "Dashboard" : "Get Started"}
               </Link>
             </div>
           </div>

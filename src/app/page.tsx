@@ -103,6 +103,26 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+
+        {/* Section 2: Testimonials */}
+        <div className="mt-32 w-full">
+          <h2 className="text-4xl font-bold text-white mb-12 text-center">What Our Users Say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              { name: "Sarah J.", role: "Frontend Developer", text: "This T3 stack boilerplate saved me weeks of setup time. Highly recommended!" },
+              { name: "Michael T.", role: "CTO", text: "The perfect balance of productivity and type safety. Our team loves it." }
+            ].map((testimonial, i) => (
+              <div key={i} className="p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05] relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 text-6xl font-serif">"</div>
+                <p className="text-slate-300 text-lg mb-6 italic">"{testimonial.text}"</p>
+                <div>
+                  <h4 className="text-white font-bold">{testimonial.name}</h4>
+                  <span className="text-emerald-400 text-sm">{testimonial.role}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   );

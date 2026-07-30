@@ -87,6 +87,22 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+
+        {/* Section 1: How it Works */}
+        <div className="mt-32 w-full text-center">
+          <h2 className="text-4xl font-bold text-white mb-6">How It Works</h2>
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-12">
+            Experience a seamless workflow from start to finish. Our platform is designed to make your journey as smooth as possible.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {['1. Discover', '2. Build', '3. Deploy'].map((step, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <h4 className="text-xl font-semibold text-emerald-400 mb-2">{step}</h4>
+                <p className="text-slate-400 text-sm">Everything you need to get started and scale your next big idea.</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   );

@@ -150,6 +150,23 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+
+        {/* Section 4: FAQ */}
+        <div className="mt-32 w-full max-w-3xl mx-auto">
+          <h2 className="text-4xl font-bold text-white mb-12 text-center">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {[
+              { q: "What is the T3 Stack?", a: "The T3 Stack is a web development boilerplate focused on simplicity, modularity, and full-stack type safety." },
+              { q: "Can I use this for production?", a: "Yes! This boilerplate is designed to be production-ready from day one, with scalable patterns baked in." },
+              { q: "How do I deploy this?", a: "You can deploy easily on platforms like Vercel or Netlify, thanks to Next.js's built-in deployment optimization." }
+            ].map((faq, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <h4 className="text-lg font-bold text-white mb-2">{faq.q}</h4>
+                <p className="text-slate-400">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   );

@@ -4,20 +4,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "node api.js && next build",
     "check": "next lint && tsc --noEmit",
     "db:generate": "prisma migrate dev --schema=prisma/schema.updated.prisma",
     "db:migrate": "prisma migrate deploy --schema=prisma/schema.updated.prisma",
     "db:push": "prisma db push --schema=prisma/schema.updated.prisma",
     "db:studio": "prisma studio --schema=prisma/schema.updated.prisma",
-    "dev": "next dev",
+    "dev": "node api.js && next dev",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "postinstall": "prisma generate --schema=prisma/schema.updated.prisma",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
-    "start": "next start",
+    "start": "node api.js && next start",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

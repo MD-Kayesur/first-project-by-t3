@@ -123,6 +123,33 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+
+        {/* Section 3: Pricing */}
+        <div className="mt-32 w-full text-center">
+          <h2 className="text-4xl font-bold text-white mb-6">Simple Pricing</h2>
+          <p className="text-slate-400 mb-12 max-w-xl mx-auto">Start for free, upgrade when you need to.</p>
+          <div className="flex flex-col md:flex-row justify-center gap-8 max-w-4xl mx-auto">
+            {[
+              { name: "Starter", price: "Free", features: ["Core features", "Community support", "1 Project"] },
+              { name: "Pro", price: "$29/mo", features: ["Everything in Starter", "Priority support", "Unlimited Projects"], highlighted: true }
+            ].map((plan, i) => (
+              <div key={i} className={`flex-1 p-8 rounded-3xl border ${plan.highlighted ? 'bg-indigo-600/10 border-indigo-500/30' : 'bg-white/[0.02] border-white/[0.05]'}`}>
+                <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+                <div className="text-4xl font-black text-white mb-6">{plan.price}</div>
+                <ul className="space-y-4 text-left mb-8">
+                  {plan.features.map((feature, j) => (
+                    <li key={j} className="flex items-center text-slate-300">
+                      <span className="text-emerald-400 mr-2">✓</span> {feature}
+                    </li>
+                  ))}
+                </ul>
+                <button className={`w-full py-3 rounded-xl font-bold transition-colors ${plan.highlighted ? 'bg-indigo-500 hover:bg-indigo-600 text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
+                  Get Started
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   );

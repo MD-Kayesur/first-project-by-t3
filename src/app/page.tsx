@@ -167,6 +167,24 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+
+        {/* Section 5: Call to Action */}
+        <div className="mt-32 mb-16 w-full max-w-4xl mx-auto text-center p-12 rounded-[2.5rem] relative overflow-hidden bg-gradient-to-br from-indigo-500/10 via-violet-500/10 to-fuchsia-500/10 border border-white/10 backdrop-blur-md">
+          <div className="absolute inset-0 bg-white/[0.02] mix-blend-overlay"></div>
+          <div className="relative z-10">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Ready to start building?</h2>
+            <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">Join thousands of developers building the future of the web with the T3 Stack.</p>
+            <Link 
+              href="/products" 
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-lg shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)] hover:scale-105 transition-all duration-300"
+            >
+              Get Started Now
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
+        </div>
       </div>
     </main>
   );
